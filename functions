@@ -1,0 +1,7 @@
+notify_dm() {
+  pkill -HUP "(kdm_greet|gdmgreeter)"
+}
+
+log() {
+  logger -p user.${1} ${2}
+}

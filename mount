@@ -1,0 +1,121 @@
+#!/bin/sh 
+
+set -x
+set -e
+echo "begin"
+. /etc/lernstick.conf
+. /usr/share/live-guest-system/functions
+
+mkdir_if_not() {
+  [ -d $1 ] || mkdir -p $1
+}
+
+# Check if a user session is running, exit if someone is logged in
+ck-list-sessions | grep -q Session && exit 0
+
+# Double check if we really have a disk, only disks
+# should trigger the udev rule.
+[ "$DEVTYPE" = "disk" ] || exit 0
+
+# check lock file
+if [ -f ${LOCKFILE} ] ; then
+  LOCKDEV=$(cat ${LOCKFILE})
+
+  # exit if our device is not the locked device and the locked
+  # device still exists
+  [ "${LOCKDEV}" != "${DEVNAME}" -a -b ${LOCKDEV} ] && exit 0
+fi
+
+# Lock the device
+echo ${DEVNAME} > ${LOCKFILE}
+
+roopt="rr"
+rofsstring=""
+PARTITIONS=$(ls $DEVNAME?)
+for p in ${PARTITIONS} ; do
+  echo "part: $p"
+
+  # check if the partition is already mounted
+  grep -q ${p} /proc/mounts && continue
+ 
+  # check for COW partition
+  LABEL=$(blkid -o value -s LABEL ${p})
+  echo "label: $LABEL"
+  if [ "$LABEL" = "live-rw" ] ; then
+     mkdir_if_not ${MOUNT_COW_DIR}
+     mount ${p} ${MOUNT_COW_DIR}
+     echo "COW: ${MOUNT_COW_DIR}"
+     continue
+  fi
+
+  # try to mount volume
+  MOUNT_DIR="${MOUNT_PARTITIONS_DIR}/$(basename ${p})"
+  mkdir_if_not ${MOUNT_DIR}
+  mount ${p} ${MOUNT_DIR}
+  echo "Mounted $p on $MOUNT_DIR"
+  
+  # check for live directory
+  image_string=""
+  if [ -d ${MOUNT_DIR}/live ] ; then
+    # scan for filesystem images
+    for FILESYSTEM in squashfs ext2 ext3 ext4 xfs jffs2 ; do
+      for IMAGE in "${MOUNT_DIR}/live"/*."${FILESYSTEM}" ; do
+        if [ -e "${IMAGE}" ] ; then
+          image_string="${image_string} ${IMAGE}"
+        fi
+      done
+    done
+
+    echo "image_string: $image_string"
+    if [ -n "${image_string}" ] ; then
+      # mount filesystem images
+      for image in ${image_string} ; do
+        imagename=$(basename "${image}")
+        MOUNT_IMAGE_DIR="${MOUNT_BASE_DIR}/${imagename}"
+        mkdir_if_not ${MOUNT_IMAGE_DIR}
+        mount -o loop,ro,noatime ${image} ${MOUNT_IMAGE_DIR}
+        rofsstring="${MOUNT_IMAGE_DIR}=${roopt}:${rofsstring}"
+      done
+      continue
+    fi
+  fi
+
+  # nothing interesting here, unmount
+  umount ${p} && rmdir ${MOUNT_DIR}
+  echo "unmounting $p"
+
+done
+
+# create root mount point
+mkdir_if_not ${MOUNT_ROOT_DIR}
+
+# Assemble aufs stacked filesystem
+mount -t ${UNIONTYPE} -o noatime,noxino,dirs=${MOUNT_COW_DIR}=rw:${rofsstring%:} ${UNIONTYPE} "${MOUNT_ROOT_DIR}"
+
+# create guest user if it does not yet exist
+getent passwd ${USER} > /dev/null || adduser --gecos "Guest Live user" --no-create-home --disabled-login ${USER}
+
+# Add user the default groups, get groups from debconf database
+for group in $(echo "GET passwd/user-default-groups" | debconf-communicate | cut -c3-); do
+  adduser "$USER" $group || true
+done
+
+# create and chown home directory
+[ -d /home/${USER} ] || mkdir /home/${USER}
+chown ${USER}:${USER} /home/${USER}
+
+# copy password from guest stick
+PW=$(egrep ^user: ${MOUNT_ROOT_DIR}/etc/shadow | cut -f 2 -d :)
+usermod --password="$PW" ${USER}
+
+# copy gecos from guest stick
+GECOS=$(egrep ^user: ${MOUNT_ROOT_DIR}/etc/passwd | cut -f 5 -d : | cut -f 1 -d ,)
+chfn -f "${GECOS} (Guest)" ${USER}
+
+# bind mount to home directory
+#bindfs -u ${USER} -g ${USER} --create-for-user=user --create-for-group=user --chgrp-ignore --chown-ignore ${MOUNT_ROOT_DIR}/home/user /home/${USER}
+bindfs --map=user/${USER}:@user/@${USER} ${MOUNT_ROOT_DIR}/home/user /home/${USER}
+
+# kill display manager greeter to show the new user
+notify_dm
+

@@ -1,0 +1,65 @@
+#!/bin/sh 
+
+set -e
+set -x
+echo "begin"
+. /etc/lernstick.conf
+. /usr/share/live-guest-system/functions
+
+umount_and_remove() {
+  umount ${UNMOUNT_OPTS} $1
+  rmdir $1 && true
+}
+
+# check lock file and read device node
+[ -r ${LOCKFILE} ] || exit 1
+DEVNAME=$(cat ${LOCKFILE})
+
+# unmount fuse bindfs mounted home dir
+umount_and_remove /home/${USER}
+
+# unmount aufs
+umount_and_remove ${MOUNT_ROOT_DIR}
+
+# unmount individual filesystems
+for d in ${MOUNT_BASE_DIR}/* ; do
+
+  # skip root, cow and partitions directories, should already be unmounted 
+  # or will be unmounted later
+  if [ "$d" = "${MOUNT_ROOT_DIR}" -o "$d" = "${MOUNT_COW_DIR}" -o "$d" = "${MOUNT_PARTITIONS_DIR}" ] ; then
+    continue
+  fi
+
+  # unmount filesystem and remove mountpoint
+  umount_and_remove  $d
+done
+
+# unmount partitions
+for d in ${MOUNT_PARTITIONS_DIR}/* ; do 
+  umount_and_remove $d
+done
+
+# unmount cow partition
+umount_and_remove ${MOUNT_COW_DIR}
+
+# eject usb stick and remove lockfile
+eject ${DEVNAME}
+rm -f ${LOCKFILE}
+
+# remove user
+# this is done manually because userdel checks if 
+# the user is still logged in. There is a -f option to
+# override this but it additionally forces other things 
+# (like removing the home directory) which are too dangerous
+if getent passwd ${USER} > /dev/null ; then
+  for f in /etc/passwd /etc/shadow ; do
+    sed --expression="/^${USER}:/ {d}" --in-place=- $f
+  done
+  for f in /etc/group /etc/gshadow ; do
+    sed --regexp-extended --expression="{/^${USER}:/ d}; {/^[a-z0-9-]+:(x|\\!|\*):([0-9]+|):[a-z0-9,-]*${USER}/ s/,?${USER}//}" --in-place=- $f
+  done
+fi
+
+# notify display manager
+notify_dm
+
