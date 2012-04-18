@@ -1,8 +1,7 @@
 #!/bin/sh 
 
-set -x
 set -e
-echo "begin"
+
 . /etc/live-guest.conf
 . /usr/share/live-guest/functions
 
@@ -11,11 +10,17 @@ mkdir_if_not() {
 }
 
 # Check if a user session is running, exit if someone is logged in
-ck-list-sessions | grep -q Session && exit 0
+if ck-list-sessions | grep -q Session ; then
+    log notice "A user session is running, exiting."
+    exit 0
+fi
 
 # Double check if we really have a disk, only disks
 # should trigger the udev rule.
-[ "$DEVTYPE" = "disk" ] || exit 0
+if [ "$DEVTYPE" = "disk" ] ; then
+    log warn "Not a disk, exiting."
+    exit 0
+fi
 
 # check lock file
 if [ -f ${LOCKFILE} ] ; then
@@ -23,7 +28,10 @@ if [ -f ${LOCKFILE} ] ; then
 
   # exit if our device is not the locked device and the locked
   # device still exists
-  [ "${LOCKDEV}" != "${DEVNAME}" -a -b ${LOCKDEV} ] && exit 0
+  if [ "${LOCKDEV}" != "${DEVNAME}" -a -b ${LOCKDEV} ] 
+      log notice "Another Debian Live guest system is already mounted."
+      exit 0
+  fi
 fi
 
 # Lock the device
@@ -33,18 +41,18 @@ roopt="rr"
 rofsstring=""
 PARTITIONS=$(ls $DEVNAME?)
 for p in ${PARTITIONS} ; do
-  echo "part: $p"
+  log debug "Checking partition: ${p}."
 
   # check if the partition is already mounted
-  grep -q ${p} /proc/mounts && continue
+  grep -q ${p} /proc/mounts && log debug "Partition ${p} already mounted." && continue
  
   # check for COW partition
   LABEL=$(blkid -o value -s LABEL ${p})
-  echo "label: $LABEL"
+  log debug "Partition $p, Label: $LABEL"
   if [ "$LABEL" = "live-rw" ] ; then
      mkdir_if_not ${MOUNT_COW_DIR}
      mount ${p} ${MOUNT_COW_DIR}
-     echo "COW: ${MOUNT_COW_DIR}"
+     log notice "Mounted COW partition ${p} on ${COW_MOUNT_DIR}"
      continue
   fi
 
@@ -52,7 +60,7 @@ for p in ${PARTITIONS} ; do
   MOUNT_DIR="${MOUNT_PARTITIONS_DIR}/$(basename ${p})"
   mkdir_if_not ${MOUNT_DIR}
   mount ${p} ${MOUNT_DIR}
-  echo "Mounted $p on $MOUNT_DIR"
+  log notice "Mounted partition ${p} on ${MOUNT_DIR}, now scanning for live filesystems."
   
   # check for live directory
   image_string=""
@@ -66,7 +74,6 @@ for p in ${PARTITIONS} ; do
       done
     done
 
-    echo "image_string: $image_string"
     if [ -n "${image_string}" ] ; then
       # mount filesystem images
       for image in ${image_string} ; do
@@ -74,6 +81,7 @@ for p in ${PARTITIONS} ; do
         MOUNT_IMAGE_DIR="${MOUNT_BASE_DIR}/${imagename}"
         mkdir_if_not ${MOUNT_IMAGE_DIR}
         mount -o loop,ro,noatime ${image} ${MOUNT_IMAGE_DIR}
+        log notice "Mounted live filesystem image ${image} on ${MOUNT_IMAGE_DIR}."
         rofsstring="${MOUNT_IMAGE_DIR}=${roopt}:${rofsstring}"
       done
       continue
@@ -82,7 +90,7 @@ for p in ${PARTITIONS} ; do
 
   # nothing interesting here, unmount
   umount ${p} && rmdir ${MOUNT_DIR}
-  echo "unmounting $p"
+  log notice "Unmounting partition ${p}. No live filesystems of COW partitions found."
 
 done
 
@@ -91,13 +99,15 @@ mkdir_if_not ${MOUNT_ROOT_DIR}
 
 # Assemble aufs stacked filesystem
 mount -t ${UNIONTYPE} -o noatime,noxino,dirs=${MOUNT_COW_DIR}=rw:${rofsstring%:} ${UNIONTYPE} "${MOUNT_ROOT_DIR}"
+log notice "Assembled Debian Live union filesystem on ${MOUNT_ROOT_DIR}"
 
 # create guest user if it does not yet exist
-getent passwd ${USER} > /dev/null || adduser --gecos "Guest Live user" --no-create-home --disabled-login ${USER}
+getent passwd ${USER} > /dev/null || adduser --gecos "Guest Live user" --no-create-home --disabled-login ${USER} && log debug "Created Guest Live user."
 
 # Add user the default groups, get groups from debconf database
 for group in $(echo "GET passwd/user-default-groups" | debconf-communicate | cut -c3-); do
   adduser "$USER" $group || true
+  log debug "Added Guest Live user default groups."
 done
 
 # create and chown home directory
@@ -113,9 +123,9 @@ GECOS=$(egrep ^user: ${MOUNT_ROOT_DIR}/etc/passwd | cut -f 5 -d : | cut -f 1 -d 
 chfn -f "${GECOS} (Guest)" ${USER}
 
 # bind mount to home directory
-#bindfs -u ${USER} -g ${USER} --create-for-user=user --create-for-group=user --chgrp-ignore --chown-ignore ${MOUNT_ROOT_DIR}/home/user /home/${USER}
 bindfs --map=user/${USER}:@user/@${USER} ${MOUNT_ROOT_DIR}/home/user /home/${USER}
 
 # kill display manager greeter to show the new user
 notify_dm
 
+log notice "Finished mounting guest Debian Live system."

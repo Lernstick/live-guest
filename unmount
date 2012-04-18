@@ -1,8 +1,7 @@
 #!/bin/sh 
 
 set -e
-set -x
-echo "begin"
+
 . /etc/live-guest.conf
 . /usr/share/live-guest/functions
 
@@ -14,6 +13,8 @@ umount_and_remove() {
 # check lock file and read device node
 [ -r ${LOCKFILE} ] || exit 1
 DEVNAME=$(cat ${LOCKFILE})
+
+log notice "Unmounting guest Debian Live system from ${DEVNAME}."
 
 # unmount fuse bindfs mounted home dir
 umount_and_remove /home/${USER}
@@ -45,6 +46,7 @@ umount_and_remove ${MOUNT_COW_DIR}
 # eject usb stick and remove lockfile
 eject ${DEVNAME}
 rm -f ${LOCKFILE}
+log notice "Unmounting guest Debian Live system on ${DEVNAME} done."
 
 # remove user
 # this is done manually because userdel checks if 
@@ -58,6 +60,7 @@ if getent passwd ${USER} > /dev/null ; then
   for f in /etc/group /etc/gshadow ; do
     sed --regexp-extended --expression="{/^${USER}:/ d}; {/^[a-z0-9-]+:(x|\\!|\*):([0-9]+|):[a-z0-9,-]*${USER}/ s/,?${USER}//}" --in-place=- $f
   done
+  log notice "Removed guest Debian Live user ${USER}."
 fi
 
 # notify display manager
