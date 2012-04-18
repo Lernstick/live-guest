@@ -1,0 +1,1 @@
+SUBSYSTEM=="block", ACTION=="add", ENV{DEVTYPE}=="disk", RUN+="/usr/share/live-guest/mount"

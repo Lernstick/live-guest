@@ -1,1 +1,0 @@
-SUBSYSTEM=="block", ACTION=="add", ENV{DEVTYPE}=="disk", RUN+="/bin/sh -x -c '/usr/local/sbin/mount-lernstick.sh > /tmp/lernstick-guest.out 2>&1'"

@@ -3,8 +3,8 @@
 set -e
 set -x
 echo "begin"
-. /etc/lernstick.conf
-. /usr/share/live-guest-system/functions
+. /etc/live-guest.conf
+. /usr/share/live-guest/functions
 
 umount_and_remove() {
   umount ${UNMOUNT_OPTS} $1

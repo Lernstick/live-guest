@@ -3,8 +3,8 @@
 set -x
 set -e
 echo "begin"
-. /etc/lernstick.conf
-. /usr/share/live-guest-system/functions
+. /etc/live-guest.conf
+. /usr/share/live-guest/functions
 
 mkdir_if_not() {
   [ -d $1 ] || mkdir -p $1
