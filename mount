@@ -17,7 +17,7 @@ fi
 
 # Double check if we really have a disk, only disks
 # should trigger the udev rule.
-if [ "$DEVTYPE" = "disk" ] ; then
+if [ "$DEVTYPE" != "disk" ] ; then
     log warn "Not a disk, exiting."
     exit 0
 fi
