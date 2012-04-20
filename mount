@@ -28,7 +28,7 @@ if [ -f ${LOCKFILE} ] ; then
 
   # exit if our device is not the locked device and the locked
   # device still exists
-  if [ "${LOCKDEV}" != "${DEVNAME}" -a -b ${LOCKDEV} ] 
+  if [ "${LOCKDEV}" != "${DEVNAME}" -a -b ${LOCKDEV} ] ; then
       log notice "Another Debian Live guest system is already mounted."
       exit 0
   fi
@@ -90,7 +90,7 @@ for p in ${PARTITIONS} ; do
 
   # nothing interesting here, unmount
   umount ${p} && rmdir ${MOUNT_DIR}
-  log notice "Unmounting partition ${p}. No live filesystems of COW partitions found."
+  log notice "Unmounting partition ${p}. No live filesystems or COW partitions found."
 
 done
 
