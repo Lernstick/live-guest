@@ -3,5 +3,5 @@ notify_dm() {
 }
 
 log() {
-  logger -p user.${1} ${2}
+  logger -t live-guest -p user.${1} ${2}
 }
