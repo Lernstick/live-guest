@@ -14,6 +14,9 @@ umount_and_remove() {
 [ -r ${LOCKFILE} ] || exit 1
 DEVNAME=$(cat ${LOCKFILE})
 
+# check if the user logging out is the live-guest user
+[ "${PAM_USER}" != "${USER}" ] || exit 0
+
 log notice "Unmounting guest Debian Live system from ${DEVNAME}."
 
 # unmount fuse bindfs mounted home dir
