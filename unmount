@@ -15,7 +15,7 @@ umount_and_remove() {
 DEVNAME=$(cat ${LOCKFILE})
 
 # check if the user logging out is the live-guest user
-[ "${PAM_USER}" != "${USER}" ] || exit 0
+[ "${PAM_USER}" = "${USER}" ] || exit 0
 
 log notice "Unmounting guest Debian Live system from ${DEVNAME}."
 
