@@ -1,0 +1,5 @@
+live-guest.conf         etc
+functions               usr/share/live-guest
+mount                   usr/share/live-guest
+unmount                 usr/share/live-guest
+debian/99_live-guest    etc/default/kdm.d
