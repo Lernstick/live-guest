@@ -40,6 +40,7 @@ echo ${DEVNAME} > ${LOCKFILE}
 roopt="rr"
 rofsstring=""
 PARTITIONS=$(ls $DEVNAME?)
+MOUNTPOINTS=""
 for p in ${PARTITIONS} ; do
   log debug "Checking partition: ${p}."
 
@@ -52,6 +53,7 @@ for p in ${PARTITIONS} ; do
   if [ "$LABEL" = "live-rw" ] ; then
      mkdir_if_not ${MOUNT_COW_DIR}
      mount ${p} ${MOUNT_COW_DIR}
+     MOUNTPOINTS="${MOUNT_COW_DIR} ${MOUNTPOINTS}"
      log notice "Mounted COW partition ${p} on ${COW_MOUNT_DIR}"
      continue
   fi
@@ -60,6 +62,7 @@ for p in ${PARTITIONS} ; do
   MOUNT_DIR="${MOUNT_PARTITIONS_DIR}/$(basename ${p})"
   mkdir_if_not ${MOUNT_DIR}
   mount ${p} ${MOUNT_DIR}
+  MOUNTPOINTS="${MOUNT_DIR} ${MOUNTPOINTS}"
   log notice "Mounted partition ${p} on ${MOUNT_DIR}, now scanning for live filesystems."
   
   # check for live directory
@@ -81,6 +84,7 @@ for p in ${PARTITIONS} ; do
         MOUNT_IMAGE_DIR="${MOUNT_BASE_DIR}/${imagename}"
         mkdir_if_not ${MOUNT_IMAGE_DIR}
         mount -o loop,ro,noatime ${image} ${MOUNT_IMAGE_DIR}
+        MOUNTPOINTS="${MOUNT_IMAGE_DIR} ${MOUNTPOINTS}"
         log notice "Mounted live filesystem image ${image} on ${MOUNT_IMAGE_DIR}."
         rofsstring="${MOUNT_IMAGE_DIR}=${roopt}:${rofsstring}"
       done
@@ -93,6 +97,15 @@ for p in ${PARTITIONS} ; do
   log notice "Unmounting partition ${p}. No live filesystems or COW partitions found."
 
 done
+
+# check if we found a COW and a root partition
+if [ -z "${MOUNT_COW_DIR}" ] ; then
+  log notice "No COW partition found. Exiting."
+  cleanup_and_exit 0
+elif [ -z "${rofsstring}" ] ; then
+  log notice "No Debian live filesystem images fond. Exiting."
+  cleanup_and_exit 0
+fi
 
 # create root mount point
 mkdir_if_not ${MOUNT_ROOT_DIR}

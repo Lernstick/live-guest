@@ -5,3 +5,12 @@ notify_dm() {
 log() {
   logger -t live-guest -p user.${1} ${2}
 }
+
+cleanup_and_exit() {
+  for mp in ${MOUNTPOINTS} ; do
+    umount $mp && rmdir $mp && true
+    log debug "Unmounting $mp."
+  done
+  rm ${LOCKFILE} && true
+  exit $1
+}
