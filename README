@@ -1,0 +1,36 @@
+
+live-guest Debian package
+-------------------------
+
+
+* Functionality *
+
+Live-guest enables a system to funtion as a hub for Debian Live
+systems. You can connect a removable medium containing a Debian Live
+system and have it automatically mounted as the home directory for
+specially created "live-guest" user.
+
+The main functionality is in the scripts /usr/share/live-guest/mount
+and /usr/share/live-guest/unmount. The first script is triggered by a
+udev rule and mounts the Debian Live system if no user is already
+logged in. The the second script cleans up the system after logout.
+It's also called by udev on device removal to clean up if not
+everything was unmounted cleanly.
+
+
+* Prerequisites *
+
+  + Autologin has to be disabled in the login manager. This is done
+    automatically if you install the package onto a Debian Live system.
+
+  + pam_scripts has to be configured as an optional session PAM module 
+    to run a script at the end of a user session. This script unmounts 
+    the guest Debian Live system. Add the following line to your PAM 
+    configuration:
+
+    session     optional        pam_script.so
+
+    See Debian bug #670182 for a proposal configure this automatically.
+    
+
+ -- Gaudenz Steinlin <gaudenz@debian.org>  Tue, 24 Apr 2012 16:31:02 +0200
