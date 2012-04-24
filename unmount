@@ -6,18 +6,40 @@ set -e
 . /usr/share/live-guest/functions
 
 umount_and_remove() {
-  umount ${UNMOUNT_OPTS} $1
-  rmdir $1 && true
+  if umount ${UNMOUNT_OPTS} $1 ; then
+    rmdir $1
+  else
+    log warn "Unable to unmount $1"
+  fi
 }
+
+# check if called from pam_script or from udev
+if [ -n "${PAM_USER}" ] ; then
+  MODE="pam_script"
+elif [ -n "${DEVNAME}" ] ; then
+  MODE="udev"
+else
+  log error "Unknown calling mode."
+  exit 1
+fi
+
+# check if called for a disk in udev mode
+if [ "${MODE}" = "udev" ] && [ "${DEVTYPE}" != "disk" ] ; then
+  log warn "Not a disk, exiting."
+  exit 1
+fi
 
 # check lock file and read device node
 [ -r ${LOCKFILE} ] || exit 1
-DEVNAME=$(cat ${LOCKFILE})
+LOCKDEV=$(cat ${LOCKFILE})
+
+# exit if not called for the disk mounted by live-guest
+[ "${MODE}" = "udev" -a "${LOCKDEV}" != "${DEVNAME}" ] && exit 0
 
 # check if the user logging out is the live-guest user
-[ "${PAM_USER}" = "${USER}" ] || exit 0
+[ "${MODE}" = "pam_script" -a "${PAM_USER}" != "${USER}" ] && exit 0
 
-log notice "Unmounting guest Debian Live system from ${DEVNAME}."
+log notice "Unmounting guest Debian Live system from ${LOCKDEV}."
 
 # unmount fuse bindfs mounted home dir
 umount_and_remove /home/${USER}
@@ -47,9 +69,9 @@ done
 umount_and_remove ${MOUNT_COW_DIR}
 
 # eject usb stick and remove lockfile
-eject ${DEVNAME}
+[ "${MODE}" = "pam_script" ] && eject ${LOCKDEV} && true
 rm -f ${LOCKFILE}
-log notice "Unmounting guest Debian Live system on ${DEVNAME} done."
+log notice "Unmounting guest Debian Live system on ${LOCKDEV} done."
 
 # remove user
 # this is done manually because userdel checks if 
