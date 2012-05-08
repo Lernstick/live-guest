@@ -33,4 +33,18 @@ everything was unmounted cleanly.
     See Debian bug #670182 for a proposal configure this automatically.
     
 
+* Custom scripts *
+
+Live-guest has several hooks to plug in custom scripts:
+
+/usr/share/live-guest/mount.d
+/usr/share/live-gust/unmount.d
+   Executable scripts in these two directories are run with run-parts after
+   everything is set up respectively before tear down. These directories are
+   meant for add-on Debian packages.
+
+/usr/local/share/live-guest/mount.d
+/usr/local/share/live-guest/unmount.d
+   These directories are for hook scripts written by the local user.
+
  -- Gaudenz Steinlin <gaudenz@debian.org>  Tue, 24 Apr 2012 16:31:02 +0200

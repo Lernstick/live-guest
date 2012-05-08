@@ -51,6 +51,12 @@ if [ "${MODE}" = "pam_script" -a "${PAM_USER}" != "${USER}" ] ; then
     exit 0
 fi
 
+# run custom scripts
+log info "Running custom scripts."
+for dir in /usr/share/live-guest/unmount.d /usr/local/share/live-guest/unmount.d ; do
+    [ -d ${dir} ] && run-parts ${dir}
+done
+
 log notice "Unmounting guest Debian Live system from ${LOCKDEV}."
 
 # unmount fuse bindfs mounted home dir
