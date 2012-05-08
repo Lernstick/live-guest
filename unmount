@@ -7,7 +7,7 @@ set -e
 
 umount_and_remove() {
   if umount ${UNMOUNT_OPTS} $1 ; then
-    rmdir $1
+    rmdir $1 || true
   else
     log warn "Unable to unmount $1"
   fi

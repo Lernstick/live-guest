@@ -137,7 +137,7 @@ GECOS=$(egrep ^user: ${MOUNT_ROOT_DIR}/etc/passwd | cut -f 5 -d : | cut -f 1 -d 
 chfn -f "${GECOS} (Guest)" ${USER}
 
 # bind mount to home directory
-bindfs --map=user/${USER}:@user/@${USER} ${MOUNT_ROOT_DIR}/home/user /home/${USER}
+bindfs -o nonempty --map=user/${USER}:@user/@${USER} ${MOUNT_ROOT_DIR}/home/user /home/${USER}
 
 # run custom scripts
 log info "Running custom scripts."
