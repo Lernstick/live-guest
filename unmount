@@ -16,8 +16,10 @@ umount_and_remove() {
 # check if called from pam_script or from udev
 if [ -n "${PAM_USER}" ] ; then
   MODE="pam_script"
+  log info "called from pam_script"
 elif [ -n "${DEVNAME}" ] ; then
   MODE="udev"
+  log info "called from udev rule"
 else
   log error "Unknown calling mode."
   exit 1
@@ -30,14 +32,24 @@ if [ "${MODE}" = "udev" ] && [ "${DEVTYPE}" != "disk" ] ; then
 fi
 
 # check lock file and read device node
-[ -r ${LOCKFILE} ] || exit 1
+if [ ! -r ${LOCKFILE} ] ; then 
+    log info "Lockfile ${LOCKFILE} unreadable or does not exist, probably no live guest device mounted. Ignoring."
+    exit 0
+fi
+
 LOCKDEV=$(cat ${LOCKFILE})
 
 # exit if not called for the disk mounted by live-guest
-[ "${MODE}" = "udev" -a "${LOCKDEV}" != "${DEVNAME}" ] && exit 0
+if [ "${MODE}" = "udev" -a "${LOCKDEV}" != "${DEVNAME}" ] ; then
+    log info "disk not mounted by live-guest, ignoring."
+    exit 0
+fi
 
 # check if the user logging out is the live-guest user
-[ "${MODE}" = "pam_script" -a "${PAM_USER}" != "${USER}" ] && exit 0
+if [ "${MODE}" = "pam_script" -a "${PAM_USER}" != "${USER}" ] ; then
+    log info "${PAM_USER} is not the live guest user. Not unmounting live guest system."
+    exit 0
+fi
 
 log notice "Unmounting guest Debian Live system from ${LOCKDEV}."
 
@@ -91,3 +103,4 @@ fi
 # notify display manager
 notify_dm
 
+log info "Finished unmount Live guest device."

@@ -118,9 +118,10 @@ log notice "Assembled Debian Live union filesystem on ${MOUNT_ROOT_DIR}"
 getent passwd ${USER} > /dev/null || adduser --gecos "Guest Live user" --no-create-home --disabled-login ${USER} && log debug "Created Guest Live user."
 
 # Add user the default groups, get groups from debconf database
+log info "Adding Guest Live user to default groups."
 for group in $(echo "GET passwd/user-default-groups" | debconf-communicate | cut -c3-); do
   adduser "$USER" $group || true
-  log debug "Added Guest Live user default groups."
+  log debug "Added Guest Live user to group $group."
 done
 
 # create and chown home directory
