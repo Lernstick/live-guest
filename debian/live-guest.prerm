@@ -44,7 +44,7 @@ case "$1" in
         fi
     ;;
 
-    failed-upgrade)
+    upgrade|failed-upgrade)
     ;;
 
     *)
