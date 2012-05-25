@@ -2,8 +2,8 @@
 
 set -e
 
-. /etc/live-guest.conf
 . /usr/share/live-guest/functions
+source_parts /etc/live-guest.d
 
 umount_and_remove() {
   if umount ${UNMOUNT_OPTS} $1 ; then

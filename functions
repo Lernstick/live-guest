@@ -14,3 +14,12 @@ cleanup_and_exit() {
   rm ${LOCKFILE} && true
   exit $1
 }
+
+source_parts() {
+  [ -d $1 ] || return
+  conffiles=$(echo $1/*.conf | sort)
+  for f in $conffiles ; do
+    . $f
+  done
+}
+

@@ -2,8 +2,8 @@
 
 set -e
 
-. /etc/live-guest.conf
 . /usr/share/live-guest/functions
+source_parts /etc/live-guest.d
 
 mkdir_if_not() {
   [ -d $1 ] || mkdir -p $1
