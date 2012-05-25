@@ -70,12 +70,13 @@ for p in ${PARTITIONS} ; do
   grep -q ${p} /proc/mounts && log debug "Partition ${p} already mounted." && continue
  
   # check for COW partition
-  LABEL=$(blkid -o value -s LABEL ${p})
+  LABEL=$(blkid -o value -s LABEL ${p} || true) # blkid sometimes just fails, try to continue without label
   log debug "Partition $p, Label: $LABEL"
-  if [ "$LABEL" = "live-rw" ] ; then
+  if [ -z "${COWDEV}" -a "$LABEL" = "live-rw" ] ; then
      mkdir_if_not ${MOUNT_COW_DIR}
      mount ${p} ${MOUNT_COW_DIR}
      MOUNTPOINTS="${MOUNT_COW_DIR} ${MOUNTPOINTS}"
+     COWDEV=${p}
      log notice "Mounted COW partition ${p} on ${COW_MOUNT_DIR}"
      continue
   fi
@@ -121,7 +122,7 @@ for p in ${PARTITIONS} ; do
 done
 
 # check if we found a COW and a root partition
-if [ -z "${MOUNT_COW_DIR}" ] ; then
+if [ -z "${COWDEV}" ] ; then
   log notice "No COW partition found. Exiting."
   cleanup_and_exit 0
 elif [ -z "${rofsstring}" ] ; then
