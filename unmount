@@ -88,20 +88,7 @@ done
 rm -f ${LOCKFILE}
 log notice "Unmounting guest Debian Live system on ${LOCKDEV} done."
 
-# remove user
-# this is done manually because userdel checks if 
-# the user is still logged in. There is a -f option to
-# override this but it additionally forces other things 
-# (like removing the home directory) which are too dangerous
-if getent passwd ${USER} > /dev/null ; then
-  for f in /etc/passwd /etc/shadow ; do
-    sed --expression="/^${USER}:/ {d}" --in-place=- $f
-  done
-  for f in /etc/group /etc/gshadow ; do
-    sed --regexp-extended --expression="{/^${USER}:/ d}; {/^[a-z0-9-]+:(x|\\!|\*):([0-9]+|):[a-z0-9,-]*${USER}/ s/,?${USER}//}" --in-place=- $f
-  done
-  log notice "Removed guest Debian Live user ${USER}."
-fi
+remove_user
 
 # notify display manager
 notify_dm

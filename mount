@@ -9,6 +9,23 @@ mkdir_if_not() {
   [ -d $1 ] || mkdir -p $1
 }
 
+cleanup_and_exit() {
+
+  [ -z "$1" ] && exitcode=$1 || exitcode=1
+
+  remove_user
+
+  for mp in ${MOUNTPOINTS} ; do
+    umount_and_remove $mp
+  done
+  rm ${LOCKFILE} && true
+  
+  # remove trap on exit to avoid rerunning it
+  trap '' 0
+
+  exit $exitcode
+}
+
 start_log
 
 # Check if a user session is running, exit if someone is logged in
@@ -35,6 +52,9 @@ if [ -f ${LOCKFILE} ] ; then
       exit 0
   fi
 fi
+
+# unmount and remove lockfile if something fails
+trap cleanup_and_exit 0 INT TERM
 
 # Lock the device
 echo ${DEVNAME} > ${LOCKFILE}
@@ -156,5 +176,7 @@ if [ "${PW}" = "${LIVE_GUEST_PW_CRYPT}" ] ; then
     log notice "Trying to log in the live-guest user."
     kdmctl login :0 now live-guest ${LIVE_GUEST_PW}
 fi
+
+trap '' 0 INT TERM
 
 log notice "Finished mounting guest Debian Live system."
