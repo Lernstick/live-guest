@@ -86,8 +86,11 @@ done
 # unmount cow partition
 umount_and_remove ${MOUNT_COW_DIR}
 
-# eject usb stick and remove lockfile
-[ "${MODE}" = "pam_script" ] && eject ${LOCKDEV} && true
+# check for other partitions that might be mounted, try to unmount them
+for d in $(cat /proc/mounts | grep "^${LOCKDEV}" | cut -f 1 -d " ") ; do
+  umount $d
+done
+
 rm -f ${LOCKFILE}
 log notice "Unmounting guest Debian Live system on ${LOCKDEV} done."
 
