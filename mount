@@ -150,4 +150,11 @@ done
 # kill display manager greeter to show the new user
 notify_dm
 
+# this logs in the live-guest user if the password was not changed from
+# the default debian-live pw
+if [ "${PW}" = "${LIVE_GUEST_PW_CRYPT}" ] ; then
+    log notice "Trying to log in the live-guest user."
+    kdmctl login :0 now live-guest ${LIVE_GUEST_PW}
+fi
+
 log notice "Finished mounting guest Debian Live system."
