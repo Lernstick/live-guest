@@ -1,5 +1,6 @@
 notify_dm() {
-  pkill -HUP "(kdm_greet|gdmgreeter)"
+  pkill -HUP gdmgreeter || true
+  /etc/init.d/kdm restart || true
 }
 
 log() {
