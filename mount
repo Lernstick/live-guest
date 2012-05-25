@@ -160,11 +160,12 @@ chfn -f "${GECOS}" ${USER}
 
 # bind mount to home directory
 bindfs -o nonempty --map=user/${USER}:@user/@${USER} ${MOUNT_ROOT_DIR}/home/user /home/${USER}
+MOUNTPOINTS="/home/${USER} ${MOUNPOINTS}"
 
 # run custom scripts
 log info "Running custom scripts."
 for dir in /usr/share/live-guest/mount.d /usr/local/share/live-guest/mount.d ; do
-    [ -d ${dir} ] && run-parts ${dir}
+    [ -d ${dir} ] && run-parts ${dir} 2>&1 | logger -t live-guest -p user.notice 
 done
 
 # kill display manager greeter to show the new user
