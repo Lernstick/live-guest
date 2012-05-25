@@ -117,6 +117,7 @@ for p in ${PARTITIONS} ; do
 
   # nothing interesting here, unmount
   umount ${p} && rmdir ${MOUNT_DIR}
+  MOUNTPOINTS=$(for m in ${MOUNTPOINTS} ; do [ "$m" != "${MOUNT_DIR}" ] && echo $m ; done) || true
   log notice "Unmounting partition ${p}. No live filesystems or COW partitions found."
 
 done
@@ -135,6 +136,7 @@ mkdir_if_not ${MOUNT_ROOT_DIR}
 
 # Assemble aufs stacked filesystem
 mount -t ${UNIONTYPE} -o noatime,noxino,dirs=${MOUNT_COW_DIR}=rw:${rofsstring%:} ${UNIONTYPE} "${MOUNT_ROOT_DIR}"
+MOUNTPOINTS="${MOUNT_ROOT_DIR} ${MOUNPOINTS}"
 log notice "Assembled Debian Live union filesystem on ${MOUNT_ROOT_DIR}"
 
 # create guest user if it does not yet exist
