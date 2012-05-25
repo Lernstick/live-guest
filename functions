@@ -24,3 +24,10 @@ source_parts() {
   done
 }
 
+start_log() {
+  if [ -n "${DEBUG_LOG_FILE}" ] ; then
+    echo "======== $0 on $(date) ==========" >> ${DEBUG_LOG_FILE}
+    exec >> ${DEBUG_LOG_FILE} 2>&1
+    set -x
+  fi 
+}

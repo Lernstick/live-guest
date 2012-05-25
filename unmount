@@ -12,6 +12,7 @@ umount_and_remove() {
     log warn "Unable to unmount $1"
   fi
 }
+start_log
 
 # check if called from pam_script or from udev
 if [ -n "${PAM_USER}" ] ; then

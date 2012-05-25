@@ -9,6 +9,8 @@ mkdir_if_not() {
   [ -d $1 ] || mkdir -p $1
 }
 
+start_log
+
 # Check if a user session is running, exit if someone is logged in
 if ck-list-sessions | grep -q Session ; then
     log notice "A user session is running, exiting."
