@@ -1,3 +1,19 @@
+live-guest (0.2) UNRELEASED; urgency=low
+
+  * [074e] Don't add "(Guest)" suffix to GECOS field
+  * [cb6e] Configuration moved to /etc/live-guest.d/
+  * [a62b] Restart KDM instead of just killing the greeter
+  * [497f] Don't eject the device on logout, just unmount
+  * [e7aa] Add debug log file (as a config option)
+  * [9850] Safer unmounting logic
+  * [fc8b] Autologin user if he has the default password
+  * [7864] Add trap to recover from failure during mount
+  * [fbb2] Log output from custom scripts and don't stop on failure
+  * [ddb9] More robust detection of COW partitions
+  * [9de3] Keep track of all partitions mounted
+
+ -- Gaudenz Steinlin <gaudenz@debian.org>  Fri, 25 May 2012 15:58:05 +0200
+
 live-guest (0.1) unstable; urgency=low
 
   * Initial Release.
