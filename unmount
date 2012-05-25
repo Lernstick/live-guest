@@ -5,13 +5,6 @@ set -e
 . /usr/share/live-guest/functions
 source_parts /etc/live-guest.d
 
-umount_and_remove() {
-  if umount ${UNMOUNT_OPTS} $1 ; then
-    rmdir $1 || true
-  else
-    log warn "Unable to unmount $1"
-  fi
-}
 start_log
 
 # check if called from pam_script or from udev

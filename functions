@@ -31,3 +31,42 @@ start_log() {
     set -x
   fi 
 }
+
+umount_and_remove() {
+
+  # kill all processes still accessing the mount point
+  signal="TERM"
+  while [ -n "$(fuser -M -m $1)" ]; do
+    # fuser has strange return values. This means there are still processes
+    # relying on the return value did not work (it changes wheter -s is given or not)
+    log notice "Some processes still accessing $1. Trying to kill them with SIG${signal}."
+    fuser -M -m $1 -k -$signal || true
+    sleep 5
+    [ ${signal} = "KILL" ] && break
+    signal="KILL"
+  done
+  procs=$(fuser -M -m $1 || true)
+  [ -n "${procs}" ] && log warn "Not all processes accessing $1 where terminated: $procs. Continueing anyway."
+
+  # try to unmount device for 15s (some processes need some time to properly quit)
+  i=0
+  log notice "Trying to unmount $1"
+  while ! umount ${UNMOUNT_OPTS} $1 ; do
+    if [ $i -gt ${UNMOUNT_TIMEOUT} ] ; then
+      log warn "Unmounting $1 failed, stopped retrying after ${UNMOUNT_TIMEOUT} seconds."
+      if mount -o ro,remount $1 ; then
+        log notice "Remounted $1 in read-only mode."
+      else
+        log warn "Failed to remount $1 in read-only mode. Completely failed to unmount device."
+      fi
+      break
+    fi
+    log debug "Unmounting $1 failed, retrying in ${UNMOUNT_INTERVAL} seconds."
+    sleep ${UNMOUNT_INTERVAL}
+    i=$((i+${UNMOUNT_INTERVAL}))
+  done
+
+  rmdir $1 || true
+  log notice "Finished unmounting $1."
+}
+
