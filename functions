@@ -37,6 +37,8 @@ start_log() {
 
 umount_and_remove() {
 
+  log notice "Trying to unmount $1"
+
   # kill all processes still accessing the mount point
   signal="TERM"
   while [ -n "$(fuser -M -m $1)" ]; do
@@ -53,7 +55,6 @@ umount_and_remove() {
 
   # try to unmount device for 15s (some processes need some time to properly quit)
   i=0
-  log notice "Trying to unmount $1"
   while ! umount ${UNMOUNT_OPTS} $1 ; do
     if [ $i -gt ${UNMOUNT_TIMEOUT} ] ; then
       log warn "Unmounting $1 failed, stopped retrying after ${UNMOUNT_TIMEOUT} seconds."

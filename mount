@@ -11,6 +11,8 @@ mkdir_if_not() {
 
 cleanup_and_exit() {
 
+  log notice "Cleaning up and unmounting partitions."
+
   [ -z "$1" ] && exitcode=$1 || exitcode=1
 
   remove_user
@@ -23,6 +25,7 @@ cleanup_and_exit() {
   # remove trap on exit to avoid rerunning it
   trap '' 0
 
+  log notice "Done cleaning up."
   exit $exitcode
 }
 
