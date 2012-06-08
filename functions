@@ -1,6 +1,18 @@
 notify_dm() {
   pkill -HUP gdmgreeter || true
-  /etc/init.d/kdm restart || true
+  # kde is a bit more complicated
+  # kdm does not always cleanly restart and
+  # not always kill the X server
+  service kdm stop
+  for p in '/usr/bin/kdm .*' '/usr/bin/X .*' ; do
+    if pgrep -fx  "$p" ; then
+      pkill -KILL -fx  "$p"
+      sleep 3
+    fi
+  done
+  service kdm start
+  # wait some time for kdm to come up
+  sleep 3
 }
 
 log() {
