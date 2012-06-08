@@ -29,7 +29,7 @@ umount_and_remove() {
   signal="TERM"
   while [ -n "$(fuser -M -m $1)" ]; do
     # fuser has strange return values. This means there are still processes
-    # relying on the return value did not work (it changes wheter -s is given or not)
+    # relying on the return value did not work (it changes whether -s is given or not)
     log notice "Some processes still accessing $1. Trying to kill them with SIG${signal}."
     fuser -M -m $1 -k -$signal || true
     sleep 5
