@@ -1,0 +1,19 @@
+#!/bin/sh
+
+. /usr/share/live-guest/functions
+source_parts /etc/live-guest.d
+
+action=$1
+
+if [ "$action" = "mount" ] ; then
+    oldid="user"
+    newid="${USER}"
+elif [ "$action" = "unmount" ] ; then
+    oldid="${USER}"
+    newid="user"
+else
+    exit 1
+fi
+
+# replace user id in .kde/share/config/ksmserverrc
+sed --in-place --regexp-extended --expression "s/^userId([0-9]+)=${oldid}$/userId\1=${newid}/" /home/${USER}/.kde/share/config/ksmserverrc
