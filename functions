@@ -7,12 +7,12 @@ notify_dm() {
   for p in '/usr/bin/kdm .*' '/usr/bin/X .*' ; do
     if pgrep -fx  "$p" ; then
       pkill -KILL -fx  "$p"
-      sleep 3
+      sleep 1
     fi
   done
   service kdm start
   # wait some time for kdm to come up
-  sleep 3
+  sleep 2
 }
 
 log() {

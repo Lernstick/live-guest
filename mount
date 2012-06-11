@@ -64,6 +64,9 @@ trap cleanup_and_exit 0 INT TERM
 # Lock the device
 echo ${DEVNAME} > ${LOCKFILE}
 
+# give the device some time to settle
+sleep 1
+
 roopt="rr"
 rofsstring=""
 PARTITIONS=$(ls $DEVNAME?)
