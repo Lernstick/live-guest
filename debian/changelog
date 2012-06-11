@@ -1,3 +1,12 @@
+live-guest (0.4) unstable; urgency=low
+
+  * [1cd3] Speed up adding user to groups
+  * [806e] Adjust wait time (dm restart, device scan)
+  * [1c98] Add action argument to custom scripts
+  * [eec3] Add script to fix KDE session files
+
+ -- Gaudenz Steinlin <gaudenz@debian.org>  Mon, 11 Jun 2012 09:53:56 +0200
+
 live-guest (0.3) unstable; urgency=low
 
   * [9fdd] Cleanup all mounts on failure
