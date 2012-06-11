@@ -189,7 +189,7 @@ notify_dm
 # the default debian-live pw
 if [ "${PW}" = "${LIVE_GUEST_PW_CRYPT}" ] ; then
     log notice "Trying to log in the live-guest user."
-    kdmctl login :0 now live-guest ${LIVE_GUEST_PW}
+    kdmctl login :0 now live-guest ${LIVE_GUEST_PW} || true
 fi
 
 trap '' 0 INT TERM
