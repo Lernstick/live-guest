@@ -31,6 +31,8 @@ cleanup_and_exit() {
 
 start_log
 
+log notice "Checking disk ${DEVNAME} for Debian Live system."
+
 # Check if a user session is running, exit if someone is logged in
 if ck-list-sessions | grep -q Session ; then
     log notice "A user session is running, exiting."
@@ -151,18 +153,22 @@ log debug "Adding ${USER} user to groups $groups."
 usermod "$USER" -a -G "$groups"
 
 # create and chown home directory
+log debug "Creating home directory for ${USER} user."
 [ -d /home/${USER} ] || mkdir /home/${USER}
 chown ${USER}:${USER} /home/${USER}
 
 # copy password from guest stick
+log debug "Copying password."
 PW=$(egrep ^user: ${MOUNT_ROOT_DIR}/etc/shadow | cut -f 2 -d :)
 usermod --password="$PW" ${USER}
 
 # copy gecos from guest stick
+log debug "Copying GECOS."
 GECOS=$(egrep ^user: ${MOUNT_ROOT_DIR}/etc/passwd | cut -f 5 -d : | cut -f 1 -d ,)
 chfn -f "${GECOS}" ${USER}
 
 # bind mount to home directory
+log debug "Mounting home directory with bindfs."
 bindfs -o nonempty --map=user/${USER}:@user/@${USER} ${MOUNT_ROOT_DIR}/home/user /home/${USER}
 MOUNTPOINTS="/home/${USER} ${MOUNTPOINTS}"
 
@@ -173,6 +179,7 @@ for dir in /usr/share/live-guest/mount.d /usr/local/share/live-guest/mount.d ; d
 done
 
 # kill display manager greeter to show the new user
+log debug "Restarting display managers."
 notify_dm
 
 # this logs in the live-guest user if the password was not changed from
