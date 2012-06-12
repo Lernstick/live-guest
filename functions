@@ -1,16 +1,19 @@
 notify_dm() {
-  pkill -HUP gdmgreeter || true
-  # kde is a bit more complicated
-  # kdm does not always cleanly restart and
+  # display managers do not always cleanly restart and
   # not always kill the X server
-  service kdm stop
-  for p in '/usr/bin/kdm .*' '/usr/bin/X .*' ; do
+  for dm in kdm gdm ; do
+    service $dm stop
+  done
+
+  for p in '/usr/bin/gdm ?.*' '/usr/bin/kdm ?.*' '/usr/bin/X ?.*' ; do
     if pgrep -fx  "$p" ; then
       pkill -KILL -fx  "$p"
       sleep 1
     fi
   done
-  service kdm start
+  for dm in kdm gdm ; do
+    service $dm start
+  done
   # wait some time for kdm to come up
   sleep 2
 }
