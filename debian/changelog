@@ -1,3 +1,10 @@
+live-guest (0.5) unstable; urgency=low
+
+  * [1f53] Don't rollback if autologin fails
+  * [6e99] Restart gdm instead of just killing the chooser
+
+ -- Gaudenz Steinlin <gaudenz@debian.org>  Tue, 12 Jun 2012 07:58:56 +0200
+
 live-guest (0.4) unstable; urgency=low
 
   * [1cd3] Speed up adding user to groups
