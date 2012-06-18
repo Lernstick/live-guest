@@ -90,7 +90,4 @@ log notice "Unmounting guest Debian Live system on ${LOCKDEV} done."
 
 remove_user
 
-# notify display manager
-notify_dm
-
 log info "Finished unmount Live guest device."

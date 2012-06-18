@@ -206,15 +206,20 @@ for dir in /usr/share/live-guest/mount.d /usr/local/share/live-guest/mount.d ; d
     [ -d ${dir} ] && run-parts --arg="mount" ${dir} 2>&1 | logger -t live-guest -p user.notice
 done
 
-# kill display manager greeter to show the new user
-log debug "Restarting display managers."
-notify_dm
-
+restart_dm="true"
 # this logs in the live-guest user if the password was not changed from
 # the default debian-live pw
-if [ "${PW}" = "${LIVE_GUEST_PW_CRYPT}" ] ; then
+if pgrep -fx "/usr/bin/kdm( .*)?" && [ "${PW}" = "${LIVE_GUEST_PW_CRYPT}" ] ; then
     log notice "Trying to log in the live-guest user."
-    kdmctl login :0 now live-guest ${LIVE_GUEST_PW} || true
+    if kdmctl login :0 now live-guest ${LIVE_GUEST_PW} ; then
+	restart_dm="false"
+    fi
+fi
+
+# kill display manager greeter to show the new user if necessary
+if [ "${restart_dm}" = "true" ] ; then
+    log debug "Restarting display managers."
+    notify_dm
 fi
 
 trap '' 0 INT TERM

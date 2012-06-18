@@ -9,7 +9,7 @@ notify_dm() {
     service $dm stop
   done
 
-  for p in '/usr/bin/gdm ?.*' '/usr/bin/kdm ?.*' '/usr/bin/X ?.*' ; do
+  for p in '/usr/bin/gdm( .*)?' '/usr/bin/kdm( .*)?' '/usr/bin/X( .*)?' ; do
     if pgrep -fx  "$p" ; then
       pkill -KILL -fx  "$p"
       sleep 1
