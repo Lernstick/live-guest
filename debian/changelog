@@ -1,3 +1,13 @@
+live-guest (0.6) unstable; urgency=low
+
+  * [89ab] Add default configuration outside of /etc
+  * [2cd1] Setup user if it does not exist
+  * [2fc7] Improved display manager restart behaviour
+  * [7b4c] Don't try to unmount no longer mounted mounts
+  * [7d63] Run fsck before mounting COW partition
+
+ -- Gaudenz Steinlin <gaudenz@debian.org>  Mon, 18 Jun 2012 16:51:18 +0200
+
 live-guest (0.5) unstable; urgency=low
 
   * [1f53] Don't rollback if autologin fails
