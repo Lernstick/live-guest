@@ -85,6 +85,10 @@ for p in ${PARTITIONS} ; do
   LABEL=$(blkid -o value -s LABEL ${p} || true) # blkid sometimes just fails, try to continue without label
   log debug "Partition $p, Label: $LABEL"
   if [ -z "${COWDEV}" -a "$LABEL" = "live-rw" ] ; then
+
+     # Do an automatic fsck for cow paritions, live-boot does the same...
+     fsck -y "${COWDEV}"
+
      mkdir_if_not ${MOUNT_COW_DIR}
      mount ${p} ${MOUNT_COW_DIR}
      MOUNTPOINTS="${MOUNT_COW_DIR} ${MOUNTPOINTS}"
