@@ -48,6 +48,13 @@ umount_and_remove() {
 
   log notice "Trying to unmount $1"
 
+  # test if still mounted
+  if ! cat /proc/mounts | cut -f 2 -d " " | egrep "^${1}$" ; then
+    log notice "$1 is no longer mounted, just removing directory."
+    rmdir $1 || true
+    return
+  fi
+
   # kill all processes still accessing the mount point
   signal="TERM"
   while [ -n "$(fuser -M -m $1)" ]; do
