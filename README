@@ -51,4 +51,10 @@ All hook scripts get either "mount" or "unmount" as the first
 argument. If the same scritp should be used in both cases the script
 should be put into mount.d and just symlinked from unmount.d.
 
+* Configuration *
+
+Configuration variables can be customized in /etc/live-guest.d/. All
+files ending in ".conf" in this directory will be source in alphabetic
+order. Default values can be found in /usr/share/live-guest/defaults.
+
  -- Gaudenz Steinlin <gaudenz@debian.org>  Tue, 24 Apr 2012 16:31:02 +0200

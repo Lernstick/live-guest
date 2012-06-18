@@ -1,4 +1,4 @@
-01_live-guest_defaults.conf         etc/live-guest.d/
+defaults                            usr/share/live-guest
 functions                           usr/share/live-guest
 mount                               usr/share/live-guest
 unmount                             usr/share/live-guest

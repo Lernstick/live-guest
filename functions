@@ -1,3 +1,7 @@
+
+# source defaults
+. /usr/share/live-guest/defaults
+
 notify_dm() {
   # display managers do not always cleanly restart and
   # not always kill the X server
@@ -25,9 +29,11 @@ log() {
 source_parts() {
   [ -d $1 ] || return
   conffiles=$(echo $1/*.conf | sort)
-  for f in $conffiles ; do
-    . $f
-  done
+  if [ "$conffiles" != "$1/*.conf" ] ; then
+    for f in $conffiles ; do
+      . $f
+    done
+  fi
 }
 
 start_log() {
