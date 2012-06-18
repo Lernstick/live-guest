@@ -143,7 +143,7 @@ if [ -z "${COWDEV}" ] ; then
   log notice "No COW partition found. Exiting."
   cleanup_and_exit 0
 elif [ -z "${rofsstring}" ] ; then
-  log notice "No Debian live filesystem images fond. Exiting."
+  log notice "No Debian live filesystem images found. Exiting."
   cleanup_and_exit 0
 fi
 
