@@ -17,6 +17,10 @@ cleanup_and_exit() {
 
   remove_user
 
+  for mp in ${BINDMOUNTS} ; do
+    umount $mp || true
+  done
+
   for mp in ${MOUNTPOINTS} ; do
     umount_and_remove $mp
   done
@@ -146,6 +150,27 @@ mkdir_if_not ${MOUNT_ROOT_DIR}
 mount -t ${UNIONTYPE} -o noatime,noxino,dirs=${MOUNT_COW_DIR}=rw:${rofsstring%:} ${UNIONTYPE} "${MOUNT_ROOT_DIR}"
 MOUNTPOINTS="${MOUNT_ROOT_DIR} ${MOUNTPOINTS}"
 log notice "Assembled Debian Live union filesystem on ${MOUNT_ROOT_DIR}"
+
+# run the Debian live user setup script to create a user on non intialized medias
+# only if /home/user does not exist yet...
+# run this chrooted to the assembled filesystem
+if [ ! -d "${MOUNT_ROOT_DIR}"/home/user -a -x "${USER_SETUP_SCRIPT}" ] ; then
+  log debug "Running ${USER_SETUP_SCRIPT} in chroot."
+  for mp in sys proc dev ; do
+    mount -o bind /$mp "${MOUNT_ROOT_DIR}"/$mp
+    BINDMOUNTS="${MOUNT_ROOT_DIR}/$mp ${BINDMOUNTS}"
+  done
+
+  export LIVE_USERNAME=user
+  export LIVE_USER_FULLNAME="Debian Live user"
+  export _PASSWORD=${LIVE_GUEST_PW_CRYPT}
+  chroot "${MOUNT_ROOT_DIR}" "${USER_SETUP_SCRIPT}"
+
+  for mp in sys proc dev ; do
+    umount "${MOUNT_ROOT_DIR}"/$mp
+    BINDMOUNTS=$(for m in ${BINDMOUNTS} ; do [ "$m" != "${MOUNT_ROOT_DIR}/$mp" ] && echo $m ; done) || true
+  done
+fi
 
 # create guest user if it does not yet exist
 getent passwd ${USER} > /dev/null || adduser --gecos "Guest Live user" --no-create-home --disabled-login ${USER} && log debug "Created Guest Live user."
