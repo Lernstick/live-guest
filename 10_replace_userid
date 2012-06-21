@@ -15,5 +15,8 @@ else
     exit 1
 fi
 
-# replace user id in .kde/share/config/ksmserverrc
-sed --in-place --regexp-extended --expression "s/^userId([0-9]+)=${oldid}$/userId\1=${newid}/" /home/${USER}/.kde/share/config/ksmserverrc
+sed -i -r "s/^userId([0-9]+)=${oldid}$/userId\1=${newid}/" \
+	/home/${USER}/.kde/share/config/ksmserverrc
+
+sed -i "s/home\/${oldid}/home\/${newid}/" \
+	/home/${USER}/.kde/share/apps/kfileplaces/bookmarks.xml

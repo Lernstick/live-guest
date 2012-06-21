@@ -1,2 +1,2 @@
 /usr/share/live-guest/unmount                       /usr/share/libpam-script/pam_script_ses_close
-/usr/share/live-guest/mount.d/10_ksmserverrc_userid /usr/share/live-guest/unmount.d/10_ksmserverrc_userid
+/usr/share/live-guest/mount.d/10_replace_userid     /usr/share/live-guest/unmount.d/10_replace_userid
