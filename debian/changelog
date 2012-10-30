@@ -1,3 +1,10 @@
+live-guest (0.16) unstable; urgency=low
+
+  * [d801] Remove separate package live-guest-kde
+  * [e29d] Remove all references to the Debian Live project
+
+ -- Gaudenz Steinlin <gaudenz@debian.org>  Tue, 30 Oct 2012 15:10:01 +0100
+
 live-guest (0.15) unstable; urgency=low
 
   * [6719] Replace userid in link to home directory
