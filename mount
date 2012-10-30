@@ -82,7 +82,24 @@ for p in ${PARTITIONS} ; do
   grep -q ${p} /proc/mounts && log debug "Partition ${p} already mounted." && continue
  
   # check for COW partition
-  LABEL=$(blkid -o value -s LABEL ${p} || true) # blkid sometimes just fails, try to continue without label
+  # wait at most 5s for the label to be detected
+  rounds=20
+  for i in $(seq ${rounds}); do
+    # blkid sometimes fails to get the label because the device is still not settled
+    if LABEL=$(blkid -o value -s LABEL ${p}) ; then
+      # the label was found
+      break
+    else
+      if [ ${i} -lt ${rounds} ] ; then
+        # no label was found, wait a little before retrying
+        log debug "no partition label was found in round $i, retrying..."
+        sleep 0.25s
+      else
+        # giving up
+        log info "No partition label found for ${p}."
+      fi
+    fi
+  done
   log debug "Partition $p, Label: $LABEL"
   if [ -z "${COWDEV}" -a "$LABEL" = "live-rw" ] ; then
 
