@@ -18,3 +18,6 @@ fi
 sed_if_exists /home/${USER}/.shutter/settings.xml \
     "s|home/${oldid}|home/${newid}|"
 
+# clean up some temp directories, otherwise the next user may
+# see files from the previous one
+log_rm /tmp/mc-${USER}
