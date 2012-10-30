@@ -26,6 +26,11 @@ else
   exit 1
 fi
 
+if [ "${MODE}" = "pam_script" ] && [ "${PAM_TYPE}" != "session" ] ; then
+    log info "pam type \"${PAM_TYPE}\" instead of \"session\", ignoring."
+    exit 0
+fi
+
 # check if called for a disk in udev mode
 if [ "${MODE}" = "udev" ] && [ "${DEVTYPE}" != "disk" ] ; then
   log warn "Not a disk, exiting."
@@ -49,6 +54,12 @@ fi
 # check if the user logging out is the live-guest user
 if [ "${MODE}" = "pam_script" -a "${PAM_USER}" != "${USER}" ] ; then
     log info "${PAM_USER} is not the live guest user. Not unmounting live guest system."
+    exit 0
+fi
+
+# check if another live-guest session is running
+if who -q | head -1 | grep -q ${USER} ; then
+    log info "Another session for ${USER} is running. Not unmounting live guest system."
     exit 0
 fi
 
