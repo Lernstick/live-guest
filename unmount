@@ -11,6 +11,13 @@ start_log
 if [ -n "${PAM_USER}" ] ; then
   MODE="pam_script"
   log info "called from pam_script"
+  log debug "PAM_USER   : ${PAM_USER}"
+  log debug "PAM_RUSER  : ${PAM_RUSER}"
+  log debug "PAM_RHOST  : ${PAM_HOST}"
+  log debug "PAM_SERVICE: ${PAM_SERVICE}"
+  log debug "PAM_AUTHTOK: ${PAM_AUTHTOK}"
+  log debug "PAM_TTY    : ${PAM_TTY}"
+  log debug "PAM_TYPE   : ${PAM_TYPE}"
 elif [ -n "${DEVNAME}" ] ; then
   MODE="udev"
   log info "called from udev rule"
