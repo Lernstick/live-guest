@@ -11,7 +11,7 @@ Vcs-Browser: https://github.com/imedias/live-guest
 Package: live-guest
 Architecture: all
 Depends: consolekit, bindfs (>= 1.10.1), passwd, adduser, eject, procps, user-setup, libpam-script (>> 1.1.5-1), sqlite3, ${misc:Depends}
-Description: Debian Live - Guest System for removable Debian Live medias
+Description: Debian Live - Guest System for removable Debian Live media
  live-guest configures your system to automatically mount Debian Live
  systems plugged into your system on removable media. After mounting
  it creates a "live-guest" user with the home directory set to the
