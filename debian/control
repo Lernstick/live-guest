@@ -1,13 +1,12 @@
 Source: live-guest
 Section: misc
 Priority: extra
-Maintainer: Debian Live Project <debian-live@lists.debian.org>
-Uploaders: Gaudenz Steinlin <gaudenz@debian.org>
+Maintainer: Gaudenz Steinlin <gaudenz@debian.org>
 Build-Depends: debhelper (>= 8.0.0)
 Standards-Version: 3.9.3
-Homepage: http://live.debian.net/devel/live-guest/
-Vcs-Git: git://live.debian.net/git/live-guest.git
-Vcs-Browser: http://live.debian.net/gitweb/?p=live-guest.git;a=summary
+Homepage: https://github.com/imedias/live-guest
+Vcs-Git: git://github.com/imedias/live-guest.git
+Vcs-Browser: https://github.com/imedias/live-guest
 
 Package: live-guest
 Architecture: all
