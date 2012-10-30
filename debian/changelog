@@ -1,3 +1,17 @@
+live-guest (0.15) unstable; urgency=low
+
+  * [6719] Replace userid in link to home directory
+  * [e521] Fix package short description
+  * [a4ce] Add sed_if_exists and log_rm functions
+  * [a2de] Add debuging output to unmount script
+  * [b1b4] Retry if blkid returns an error
+  * [361d] Don't unmount if live-guest still logged in
+  * [dbff] Move KDE fixup routines to a separate package
+  * [4f22] Replace userid in shutter config
+  * [5a70] Remove midnight commander temporary files
+
+ -- Gaudenz Steinlin <gaudenz@debian.org>  Tue, 30 Oct 2012 14:17:20 +0100
+
 live-guest (0.6) unstable; urgency=low
 
   * [89ab] Add default configuration outside of /etc
