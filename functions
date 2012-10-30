@@ -107,3 +107,18 @@ remove_user() {
     log notice "Removed guest Debian Live user ${USER}."
   fi
 }
+
+sed_if_exists () {
+    SED_FILE=$1
+    if [ -f ${SED_FILE} ]
+    then
+        sed --regexp-extended --in-place "$2" "${SED_FILE}"
+    else
+        log notice "${SED_FILE} does not exist"
+    fi
+}
+
+log_rm () {
+    log info "removing $1"
+    rm -rf $1
+}
