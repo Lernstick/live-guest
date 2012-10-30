@@ -1,0 +1,81 @@
+#!/bin/sh
+
+. /usr/share/live-guest/functions
+source_parts /etc/live-guest.d
+
+action=$1
+
+if [ "$action" = "mount" ] ; then
+    oldid="user"
+    newid="${USER}"
+elif [ "$action" = "unmount" ] ; then
+    oldid="${USER}"
+    newid="user"
+else
+    exit 1
+fi
+
+sed_if_exists /home/${USER}/.kde/share/apps/amarok/my.cnf \
+    "s|home/${oldid}|home/${newid}|"
+
+sed_if_exists /home/${USER}/.kde/share/apps/kfileplaces/bookmarks.xml \
+    "s|home/${oldid}|home/${newid}|"
+
+sed_if_exists /home/${USER}/.kde/share/apps/konqueror/closeditems_saved \
+    "s|home/${oldid}|home/${newid}|"
+
+sed_if_exists /home/${USER}/.kde/share/config/amarokrc \
+    "s|home/${oldid}|home/${newid}|"
+
+sed_if_exists /home/${USER}/.kde/share/config/krunnerrc \
+    "s|home/${oldid}|home/${newid}|"
+
+sed_if_exists /home/${USER}/.kde/share/config/plasma-desktoprc \
+    "s|home/${oldid}|home/${newid}|"
+
+sed_if_exists /home/${USER}/.kde/share/config/startupconfigfiles \
+    "s|home/${oldid}|home/${newid}|"
+
+sed_if_exists /home/${USER}/.kde/share/config/ksmserverrc \
+    "s|^userId([0-9]+)=${oldid}$|userId\1=${newid}|" 
+
+
+# digikam support
+fix_digikam_database () {
+    DATABASE_FILE_PATH=$(grep -s "Database File Path" /home/${USER}/.kde/share/config/digikamrc | awk -F= '{ print $2 }')
+    if [ -n "${DATABASE_FILE_PATH}" ]
+    then
+        log info "using digikam database ${DATABASE_FILE_PATH}/digikam4.db"
+        for identifier in $(sqlite3 "${DATABASE_FILE_PATH}/digikam4.db" 'select identifier from AlbumRoots;')
+        do
+            if echo ${identifier} | grep -q "path=%2Fhome%2F${oldid}%2F"
+            then
+                log info "replacing digikam database identifier ${identifier}"
+                new_identifier=$(echo "${identifier}" | sed "s|${oldid}|${newid}|")
+                sqlite3 ${DATABASE_FILE_PATH}/digikam4.db \
+                    "update AlbumRoots set identifier=\"${new_identifier}\" where identifier=\"${identifier}\";"
+            else
+                log info "ignoring digikam database identifier ${identifier}"
+            fi
+        done
+    else
+        log info "digikam database not found"
+    fi
+}
+fix_digikam_rcfile () {
+    sed_if_exists /home/${USER}/.kde/share/config/digikamrc \
+        "s|home/${oldid}|home/${newid}|"
+}
+if [ "$action" = "mount" ] ; then
+    fix_digikam_rcfile
+    fix_digikam_database
+elif [ "$action" = "unmount" ] ; then
+    fix_digikam_database
+    fix_digikam_rcfile
+fi
+
+# clean up some temp directories, otherwise the next user may
+# see files from the previous one
+log_rm /tmp/kde-${USER}
+log_rm /tmp/ksocket-${USER}
+log_rm /var/tmp/kdecache-${USER}

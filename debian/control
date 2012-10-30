@@ -26,3 +26,23 @@ Description: Debian Live - Guest System for removable Debian Live medias
  users access based on information from untrusted removable media.
  Don't install it on systems where you don't want random strangers to
  gain full access.
+
+Package: live-guest-kde
+Architecture: all
+Depends: live-guest, sqlite3, ${misc:Depends}
+Description: Debian Live - Live Guest System, KDE support scripts
+ live-guest configures your system to automatically mount Debian Live
+ systems plugged into your system on removable media. After mounting
+ it creates a "live-guest" user with the home directory set to the
+ Debian Live user on the media.
+ .
+ This package is used to setup Debian Live "hubs" where users can plug
+ in their live media and work with their data and settings without the
+ need to reboot the computer for different users.
+ .
+ live-guest may compromise the security of your system by allowing
+ users access based on information from untrusted removable media.
+ Don't install it on systems where you don't want random strangers to
+ gain full access.
+ .
+ This package contains the KDE support scripts for live-guest.

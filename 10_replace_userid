@@ -15,8 +15,4 @@ else
     exit 1
 fi
 
-sed -i -r "s/^userId([0-9]+)=${oldid}$/userId\1=${newid}/" \
-	/home/${USER}/.kde/share/config/ksmserverrc
 
-sed -i "s/home\/${oldid}/home\/${newid}/" \
-	/home/${USER}/.kde/share/apps/kfileplaces/bookmarks.xml
