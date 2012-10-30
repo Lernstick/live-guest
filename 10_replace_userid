@@ -15,4 +15,6 @@ else
     exit 1
 fi
 
+sed_if_exists /home/${USER}/.shutter/settings.xml \
+    "s|home/${oldid}|home/${newid}|"
 
