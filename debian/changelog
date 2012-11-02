@@ -1,3 +1,9 @@
+live-guest (0.17) unstable; urgency=low
+
+  * only unmount when triggered by kdm or gdm session events
+
+ -- Ronny Standtke <ronny.standtke@fhnw.ch>  Fri, 02 Nov 2012 11:40:42 +0100
+
 live-guest (0.16) unstable; urgency=low
 
   * [d801] Remove separate package live-guest-kde

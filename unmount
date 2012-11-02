@@ -63,6 +63,19 @@ if who -q | head -1 | grep -q ${USER} ; then
     exit 0
 fi
 
+# this script gets called for *EVERY* pam service but we
+# are only interested in kdm or gdm session events
+if [ "${PAM_SERVICE}" != "kdm" -a "${PAM_SERVICE}" != "gdm" ]
+then
+    log info "pam service \"${PAM_SERVICE}\" is not supported, only \"kdm\" and \"gdm\", ignoring."
+    exit 0
+fi
+if [ "${PAM_TYPE}" != "session" ]
+then
+    log info "pam type \"${PAM_TYPE}\" is not supported, only \"session\", ignoring."
+    exit 0
+fi
+
 # run custom scripts
 log info "Running custom scripts."
 for dir in /usr/share/live-guest/unmount.d /usr/local/share/live-guest/unmount.d ; do

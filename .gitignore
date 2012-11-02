@@ -1,0 +1,6 @@
+debian/files
+debian/live-guest.debhelper.log
+debian/live-guest.postinst.debhelper
+debian/live-guest.preinst.debhelper
+debian/live-guest.substvars
+debian/live-guest/
