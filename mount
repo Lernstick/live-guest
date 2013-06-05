@@ -194,7 +194,7 @@ if [ ! -d "${MOUNT_ROOT_DIR}"/home/user -a -x "${USER_SETUP_SCRIPT}" ] ; then
 fi
 
 # create guest user if it does not yet exist
-getent passwd ${USER} > /dev/null || adduser --gecos "Guest Live user" --no-create-home --disabled-login ${USER} && log debug "Created Guest Live user."
+getent passwd ${USER} > /dev/null || adduser --no-create-home --disabled-login ${USER} && log debug "Created Guest Live user."
 
 # Add user the default groups, get groups from debconf database
 groups=$(echo "GET passwd/user-default-groups" | debconf-communicate | cut -c3- | tr " " ",")
@@ -214,7 +214,7 @@ usermod --password="$PW" ${USER}
 # copy gecos from guest stick
 log debug "Copying GECOS."
 GECOS=$(egrep ^user: ${MOUNT_ROOT_DIR}/etc/passwd | cut -f 5 -d : | cut -f 1 -d ,)
-chfn -f "${GECOS}" ${USER}
+chfn -f "${GECOS} (Guest)" ${USER}
 
 # bind mount to home directory
 log debug "Mounting home directory with bindfs."
