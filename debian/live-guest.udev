@@ -1,2 +1,2 @@
-SUBSYSTEM=="block", ACTION=="add", ENV{DEVTYPE}=="disk", RUN+="/usr/share/live-guest/mount"
+SUBSYSTEM=="block", ACTION=="add", ENV{DEVTYPE}=="disk", RUN+="/usr/share/live-guest/mount", OPTIONS+="event_timeout=120"
 SUBSYSTEM=="block", ACTION=="remove", ENV{DEVTYPE}=="disk", RUN+="/usr/share/live-guest/unmount"
