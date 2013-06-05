@@ -5,7 +5,7 @@
 notify_dm() {
   # display managers do not always cleanly restart and
   # not always kill the X server
-  for dm in kdm gdm ; do
+  for dm in kdm gdm3 ; do
     service $dm stop
   done
 
@@ -15,7 +15,7 @@ notify_dm() {
       sleep 1
     fi
   done
-  for dm in kdm gdm ; do
+  for dm in kdm gdm3 ; do
     service $dm start
   done
   # wait some time for kdm to come up

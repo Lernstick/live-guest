@@ -33,12 +33,12 @@ case "$1" in
         fi
 
         # GDM 
-        checkfile=/var/lib/live/config/gdm
+        checkfile=/var/lib/live/config/gdm3
         if [ -e  $checkfile ] && [ "$(cat $checkfile)" = "live-guest" ] ; then
             echo -n "Reactivating autologin for GDM ... "
             sed -i -e "s|^AutomaticLoginEnable=false\$|AutomaticLoginEnable=true|" \
                 -e "s|^TimedLoginEnable=false\$|TimedLoginEnable=true|" \
-                /etc/gdm/gdm.conf
+                /etc/gdm3/daemon.conf
             echo "" >  $checkfile
             echo "done."
         fi

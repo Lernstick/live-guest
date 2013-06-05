@@ -37,12 +37,12 @@ case "$1" in
             fi
 
             # GDM 
-            if [ -e /var/lib/live/config/gdm ] ; then
+            if [ -e /var/lib/live/config/gdm3 ] ; then
                 echo -n "Deactivating autologin for GDM ... "
                 sed -i -e "s|^AutomaticLoginEnable=true\$|AutomaticLoginEnable=false|" \
                     -e "s|^TimedLoginEnable=true\$|TimedLoginEnable=false|" \
-                    /etc/gdm/gdm.conf
-                echo "live-guest" > /var/lib/live/config/gdm
+                    /etc/gdm3/daemon.conf
+                echo "live-guest" > /var/lib/live/config/gdm3
                 echo "done."
             fi
         fi

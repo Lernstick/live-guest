@@ -58,18 +58,26 @@ if [ "${MODE}" = "pam_script" -a "${PAM_USER}" != "${USER}" ] ; then
 fi
 
 # check if another live-guest session is running
-if who -q | head -1 | grep -q ${USER} ; then
+other_session="false"
+case "${PAM_SERVICE}" in
+    kdm)
+        who -q | head -1 | grep -q ${USER} && other_session="true"
+        ;;
+    gdm3)
+        [ $(who -q | head -1 | grep -c ${USER}) -gt 1 ] && other_session="true"
+        ;;
+    *)
+        # this script gets called for *EVERY* pam service but we
+        # are only interested in kdm or gdm session events
+        log info "pam service \"${PAM_SERVICE}\" is not supported, only \"kdm\" and \"gdm3\", ignoring."
+        exit 0
+esac
+
+if ${other_session} ; then
     log info "Another session for ${USER} is running. Not unmounting live guest system."
     exit 0
 fi
 
-# this script gets called for *EVERY* pam service but we
-# are only interested in kdm or gdm session events
-if [ "${PAM_SERVICE}" != "kdm" -a "${PAM_SERVICE}" != "gdm" ]
-then
-    log info "pam service \"${PAM_SERVICE}\" is not supported, only \"kdm\" and \"gdm\", ignoring."
-    exit 0
-fi
 if [ "${PAM_TYPE}" != "session" ]
 then
     log info "pam type \"${PAM_TYPE}\" is not supported, only \"session\", ignoring."
