@@ -3,7 +3,7 @@ Section: misc
 Priority: extra
 Maintainer: Gaudenz Steinlin <gaudenz@debian.org>
 Build-Depends: debhelper (>= 8.0.0)
-Standards-Version: 3.9.3
+Standards-Version: 3.9.4
 Homepage: https://github.com/imedias/live-guest
 Vcs-Git: git://github.com/imedias/live-guest.git
 Vcs-Browser: https://github.com/imedias/live-guest
