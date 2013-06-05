@@ -197,9 +197,11 @@ fi
 getent passwd ${USER} > /dev/null || adduser --no-create-home --disabled-login ${USER} && log debug "Created Guest Live user."
 
 # Add user the default groups, get groups from debconf database
-groups=$(echo "GET passwd/user-default-groups" | debconf-communicate | cut -c3- | tr " " ",")
+groups=$(echo "GET passwd/user-default-groups" | debconf-communicate | cut -c3- )
 log debug "Adding ${USER} user to groups $groups."
-usermod "$USER" -a -G "$groups"
+for g in $groups; do
+    adduser "$USER" "$g" || true
+done
 
 # create and chown home directory
 log debug "Creating home directory for ${USER} user."
