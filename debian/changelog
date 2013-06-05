@@ -1,3 +1,14 @@
+live-guest (0.18) unstable; urgency=low
+
+  * [e486] Add timeout for udev rule
+  * [cdbc] Adaptions for gdm3
+  * [2fda] Add "(Guest)" to GECOS field for live-guest user
+  * [78d7] Don't fail if a group does not exist
+  * [5836] Update to Debian Policy 3.9.4, no changes needed
+  * [592f] Adapt MOUNT_BASE_DIR for wheezy
+
+ -- Gaudenz Steinlin <gaudenz@debian.org>  Wed, 05 Jun 2013 18:16:32 +0200
+
 live-guest (0.17) unstable; urgency=low
 
   * only unmount when triggered by kdm or gdm session events
