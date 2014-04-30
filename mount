@@ -101,7 +101,7 @@ for p in ${PARTITIONS} ; do
     fi
   done
   log debug "Partition $p, Label: $LABEL"
-  if [ -z "${COWDEV}" -a "$LABEL" = "live-rw" ] ; then
+  if [ -z "${COWDEV}" -a \( "$LABEL" = "live-rw" -o "$LABEL" = "persistence" \) ] ; then
 
      # Do an automatic fsck for cow paritions, live-boot does the same...
      fsck -y "${COWDEV}"
