@@ -1,3 +1,10 @@
+live-guest (0.19) unstable; urgency=medium
+
+  * [ac7a] Accept "persistence" as label for the COW partition
+  * [cd6f] Update standards version to 3.9.5 (no changes)
+
+ -- Gaudenz Steinlin <gaudenz@debian.org>  Wed, 30 Apr 2014 15:46:11 +0200
+
 live-guest (0.18) unstable; urgency=low
 
   * [e486] Add timeout for udev rule
