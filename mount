@@ -234,7 +234,7 @@ restart_dm="true"
 # the default debian-live pw
 if pgrep -fx "/usr/bin/kdm( .*)?" && [ "${PW}" = "${LIVE_GUEST_PW_CRYPT}" ] ; then
     log notice "Trying to log in the live-guest user."
-    if kdmctl login :0 now live-guest ${LIVE_GUEST_PW} ; then
+    if kdmctl login :0 now live-guest "${LIVE_GUEST_PW}" ; then
 	restart_dm="false"
     fi
 fi
