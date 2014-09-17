@@ -1,3 +1,9 @@
+live-guest (0.20) unstable; urgency=medium
+
+  * [951a] Add quotes around password
+
+ -- Gaudenz Steinlin <gaudenz@debian.org>  Wed, 17 Sep 2014 15:34:56 +0200
+
 live-guest (0.19) unstable; urgency=medium
 
   * [ac7a] Accept "persistence" as label for the COW partition
