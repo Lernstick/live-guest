@@ -1,3 +1,9 @@
+live-guest (0.21) unstable; urgency=low
+
+  * [34c2] added logout workaround
+
+ -- Ronny Standtke <ronny.standtke@fhnw.ch>  Thu, 16 Apr 2015 15:16:27 +0200
+
 live-guest (0.20) unstable; urgency=medium
 
   * [951a] Add quotes around password
