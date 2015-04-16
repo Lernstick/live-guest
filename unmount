@@ -129,4 +129,11 @@ log notice "Unmounting guest Debian Live system on ${LOCKDEV} done."
 
 remove_user
 
+# We did run into situations where a crashed service (e.g. kactivitymanagerd)
+# prevented a successfull restart of the display manager.
+# The users were left with a black screen and a (still working) mouse pointer.
+# To work around this issue we enforce restarting the display manager here.
+log debug "Restarting display managers."
+notify_dm
+
 log info "Finished unmount Live guest device."
