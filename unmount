@@ -63,7 +63,7 @@ case "${PAM_SERVICE}" in
     kdm)
         who -q | head -1 | grep -q ${USER} && other_session="true"
         ;;
-    gdm3)
+    gdm-password)
         [ $(who -q | head -1 | grep -c ${USER}) -gt 1 ] && other_session="true"
         ;;
     *)
