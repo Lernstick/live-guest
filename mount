@@ -194,7 +194,7 @@ if [ ! -d "${MOUNT_ROOT_DIR}"/home/user -a -x "${USER_SETUP_SCRIPT}" ] ; then
 fi
 
 # create guest user if it does not yet exist
-getent passwd ${USER} > /dev/null || adduser --no-create-home --disabled-login ${USER} && log debug "Created Guest Live user."
+getent passwd ${USER} > /dev/null || useradd -p "" ${USER} && log debug "Created Guest Live user."
 
 # Add user the default groups, get groups from debconf database
 groups=$(echo "GET passwd/user-default-groups" | debconf-communicate | cut -c3- )
