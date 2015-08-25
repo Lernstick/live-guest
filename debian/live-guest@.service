@@ -1,0 +1,7 @@
+[Unit]
+After=%i.device
+
+[Service]
+Type=forking
+Restart=no
+ExecStart=/usr/share/live-guest/mount %I

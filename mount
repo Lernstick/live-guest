@@ -35,18 +35,18 @@ cleanup_and_exit() {
 
 start_log
 
+DEVNAME="$1"
+
+if [ -z "${DEVNAME}" ] ; then
+  log notice "No device given. Exiting."
+  exit 1
+fi
+
 log notice "Checking disk ${DEVNAME} for Debian Live system."
 
 # Check if a user session is running, exit if someone is logged in
 if [ $(ck-list-sessions | grep realname | grep -cv "Gnome Display Manager") -gt 0 ] ; then
     log notice "A user session is running, exiting."
-    exit 0
-fi
-
-# Double check if we really have a disk, only disks
-# should trigger the udev rule.
-if [ "$DEVTYPE" != "disk" ] ; then
-    log warn "Not a disk, exiting."
     exit 0
 fi
 

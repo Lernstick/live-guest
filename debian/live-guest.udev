@@ -1,2 +1,2 @@
-SUBSYSTEM=="block", ACTION=="add", ENV{DEVTYPE}=="disk", RUN+="/usr/share/live-guest/mount", OPTIONS+="event_timeout=120"
+SUBSYSTEM=="block", ACTION=="add", ENV{DEVTYPE}=="disk", PROGRAM="/bin/systemd-escape -p --template=live-guest@.service $env{DEVNAME}", ENV{SYSTEMD_WANTS}+="%c"
 SUBSYSTEM=="block", ACTION=="remove", ENV{DEVTYPE}=="disk", RUN+="/usr/share/live-guest/unmount"
