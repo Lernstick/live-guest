@@ -9,11 +9,16 @@ mkdir_if_not() {
   [ -d $1 ] || mkdir -p $1
 }
 
+on_error() {
+  log notice "Something bad happend, failure trap activated, aborting."
+  cleanup_and_exit 1
+}
+
 cleanup_and_exit() {
 
-  log notice "Cleaning up and unmounting partitions."
-
   [ -z "$1" ] && exitcode=$1 || exitcode=1
+
+  log notice "Cleaning up and unmounting partitions."
 
   remove_user
 
@@ -63,7 +68,7 @@ if [ -f ${LOCKFILE} ] ; then
 fi
 
 # unmount and remove lockfile if something fails
-trap cleanup_and_exit 0 INT TERM
+trap on_error 0 INT TERM
 
 # Lock the device
 echo ${DEVNAME} > ${LOCKFILE}
