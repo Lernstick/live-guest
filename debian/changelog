@@ -1,3 +1,15 @@
+live-guest (0.22) lernstick-8; urgency=medium
+
+  * [3704b1] Convert to a systemd service
+  * [032fe3] Use useradd instead of adduser
+  * [429d98] Log message when error trap is activated
+  * [f0b7f6] GDM's PAM service name changed to gdm-password
+  * [e4a2c1] Set empty password as the default
+  * [8d5d17] Only restart KDM
+  * [2aa64d] Update to policy sversion 3.9.6 (no changes needed)
+
+ -- Gaudenz Steinlin <gaudenz@debian.org>  Tue, 25 Aug 2015 15:14:29 +0200
+
 live-guest (0.21) unstable; urgency=low
 
   * [34c2] added logout workaround
