@@ -50,7 +50,8 @@ fi
 log notice "Checking disk ${DEVNAME} for Debian Live system."
 
 # Check if a user session is running, exit if someone is logged in
-if [ $(ck-list-sessions | grep realname | grep -cv "Gnome Display Manager") -gt 0 ] ; then
+SESSION_ID=$(loginctl list-sessions | grep 1000 | tr -s ' ' | cut -d' ' -f 2)
+if loginctl show-session "$SESSION_ID" 2>/dev/null | grep "Service=gdm" >/dev/null; then
     log notice "A user session is running, exiting."
     exit 0
 fi
@@ -199,7 +200,8 @@ if [ ! -d "${MOUNT_ROOT_DIR}"/home/user -a -x "${USER_SETUP_SCRIPT}" ] ; then
 fi
 
 # create guest user if it does not yet exist
-getent passwd ${USER} > /dev/null || useradd -p "" ${USER} && log debug "Created Guest Live user."
+getent passwd ${USER} > /dev/null || useradd -p "" ${USER} -s /bin/bash \
+  && log debug "Created Guest Live user."
 
 # Add user the default groups, get groups from debconf database
 groups=$(echo "GET passwd/user-default-groups" | debconf-communicate | cut -c3- )
