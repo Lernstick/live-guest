@@ -45,8 +45,13 @@ case "$1" in
                 echo "live-guest" > /var/lib/live/config/gdm3
                 echo "done."
             fi
-        fi
 
+            # show wait dialog before GDM start
+            if ! grep -e "wait_dialog" /etc/gdm3/Init/Default ; then
+                sed -i 's|^exit 0$|xsetroot -cursor_name left_ptr\n/usr/share/live-guest/wait_dialog/wait_dialog.py\nexit 0|' \
+                    /etc/gdm3/Init/Default
+            fi
+        fi
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

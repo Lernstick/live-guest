@@ -6,3 +6,5 @@ debian/99_live-guest                etc/default/kdm.d
 10_replace_userid                   usr/share/live-guest/mount.d
 10_fixup_kde                        usr/share/live-guest/mount.d
 debian/live-guest@.service          lib/systemd/system
+wait_dialog/wait_dialog.py          usr/share/live-guest/wait_dialog
+wait_dialog/dialog.glade            usr/share/live-guest/wait_dialog

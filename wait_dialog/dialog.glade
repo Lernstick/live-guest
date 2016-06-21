@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.20.0 -->
+<interface>
+  <requires lib="gtk+" version="3.8"/>
+  <object class="GtkWindow" id="wait_dialog">
+    <property name="can_focus">False</property>
+    <property name="default_width">400</property>
+    <property name="default_height">250</property>
+    <child>
+      <object class="GtkLayout" id="layout1">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="width">0</property>
+        <property name="height">0</property>
+        <child>
+          <object class="GtkButton" id="continue_without_stick">
+            <property name="label" translatable="yes">Ohne Lernstick fortfahren</property>
+            <property name="width_request">234</property>
+            <property name="height_request">44</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="has_focus">True</property>
+            <property name="receives_default">True</property>
+            <signal name="clicked" handler="on_continue_without_stick_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">63</property>
+            <property name="y">104</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSpinner" id="spinner">
+            <property name="width_request">100</property>
+            <property name="height_request">41</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="active">True</property>
+          </object>
+          <packing>
+            <property name="x">126</property>
+            <property name="y">53</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel">
+            <property name="width_request">203</property>
+            <property name="height_request">55</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Warte auf Lernstick...</property>
+            <attributes>
+              <attribute name="font-desc" value="Bitstream Vera Sans Bold 13"/>
+            </attributes>
+          </object>
+          <packing>
+            <property name="x">79</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
