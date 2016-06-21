@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 CHECK_FREQUENCY = 1  # seconds
-LOG_TO_SYSLOG = True
+LOG_TO_SYSLOG = False
 
 import os
 from subprocess import Popen, PIPE
