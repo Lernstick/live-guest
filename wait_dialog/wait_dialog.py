@@ -18,6 +18,7 @@ handlers = {
 builder.connect_signals(handlers)
 w = builder.get_object('wait_dialog')
 w.resize(370, 170)
+w.set_position(Gtk.WindowPosition.CENTER)
 w.show_all()
 
 def log(msg):
